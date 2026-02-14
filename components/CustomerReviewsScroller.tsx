@@ -1,20 +1,16 @@
 import React from 'react';
-import { MapPin } from 'lucide-react';
+import { Star } from 'lucide-react';
 
-const AvailablePlotsScroller: React.FC = () => {
-    const plots = [
-        "CMDA Approved Plots in Poonamallee",
-        "CMDA Approved Plots in Avadi",
-        "Premium Villas in Porur",
-        "Residential Plots in Tambaram",
-        "DTCP Plots in Kundrathur",
-        "Luxury Apartments in Vadapalani",
-        "Commercial Plots in Guindy",
-        "CMDA Approved Sites in Chromepet",
-        "Individual Houses in Pallavaram",
-        "Gated Community Plots in Urapakkam",
-        "Gated Villas in Paruthipattu",
-
+const CustomerReviewsScroller: React.FC = () => {
+    const reviews = [
+        "Arun - Very Good Guiding & Easier Documentation",
+        "Priya Saran. - Excellent Service, Hassle-Free Registration",
+        "Karthik R. - Trustworthy & Professional Team",
+        "Lakshmi V. - Best Real Estate Experience in Chennai",
+        "Suresh M. - Quick & Transparent Property Deals",
+        "Divya K. - Highly Recommended for First-Time Buyers",
+        "Rajesh P. - Exceptional Support Throughout the Process",
+        "Meena G. - Very Reliable & Auspicious Company",
     ];
 
     return (
@@ -28,14 +24,14 @@ const AvailablePlotsScroller: React.FC = () => {
             <div className="flex animate-scroll w-max">
                 {/* First Set of Items */}
                 <div className="flex shrink-0">
-                    {plots.map((plot, index) => (
+                    {reviews.map((review, index) => (
                         <div
-                            key={`plot-1-${index}`}
+                            key={`review-1-${index}`}
                             className="inline-flex items-center px-8 text-gold-deep whitespace-nowrap"
                         >
-                            <MapPin size={18} className="mr-2 flex-shrink-0 text-gold" />
+                            <Star size={16} className="mr-2 flex-shrink-0 text-gold fill-gold" />
                             <span className="font-sans font-semibold text-sm md:text-base tracking-wide">
-                                {plot}
+                                {review}
                             </span>
                             <span className="ml-6 text-gold/40 text-xl">•</span>
                         </div>
@@ -44,14 +40,14 @@ const AvailablePlotsScroller: React.FC = () => {
 
                 {/* Duplicate Set of Items (Identical to First) */}
                 <div className="flex shrink-0">
-                    {plots.map((plot, index) => (
+                    {reviews.map((review, index) => (
                         <div
-                            key={`plot-2-${index}`}
+                            key={`review-2-${index}`}
                             className="inline-flex items-center px-8 text-gold-deep whitespace-nowrap"
                         >
-                            <MapPin size={18} className="mr-2 flex-shrink-0 text-gold" />
+                            <Star size={16} className="mr-2 flex-shrink-0 text-gold fill-gold" />
                             <span className="font-sans font-semibold text-sm md:text-base tracking-wide">
-                                {plot}
+                                {review}
                             </span>
                             <span className="ml-6 text-gold/40 text-xl">•</span>
                         </div>
@@ -66,4 +62,4 @@ const AvailablePlotsScroller: React.FC = () => {
     );
 };
 
-export default AvailablePlotsScroller;
+export default CustomerReviewsScroller;

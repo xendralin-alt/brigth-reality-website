@@ -443,12 +443,6 @@ const Gallery: React.FC = () => {
               }`}
           >
             {currentIdx + 1} / {GALLERY_ITEMS.length} — {GALLERY_ITEMS[currentIdx].alt}
-            {GALLERY_ITEMS[currentIdx].type !== 'video' && (
-              <>
-                <span className="hidden md:inline ml-2 text-white/60">• Scroll to zoom</span>
-                <span className="md:hidden ml-2 text-white/60">• Swipe to navigate</span>
-              </>
-            )}
           </div>
 
           {/* Swipe Instruction - Mobile Only - Auto-hiding */}

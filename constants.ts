@@ -60,6 +60,20 @@ export const SLIDES: Slide[] = [
     src: "https://i.pinimg.com/736x/e9/0c/5e/e90c5eb1955ad9316f10098a5d920499.jpg",
     alt: "Futuristic Architecture"
   },
+  {
+    id: 4,
+    name: "Slide4",
+    subtitle: "Your Subtitle Here",
+    src: "https://i.pinimg.com/736x/e9/0c/5e/e90c5eb1955ad9316f10098a5d920499.jpg",
+    alt: "Futuristic Architecture"
+  },
+  {
+    id: 5,
+    name: "Slide5",
+    subtitle: "Your Subtitle Here",
+    src: "https://i.pinimg.com/736x/e9/0c/5e/e90c5eb1955ad9316f10098a5d920499.jpg",
+    alt: "Futuristic Architecture"
+  },
 ];
 
 export const SERVICES: ServiceItem[] = [
@@ -86,7 +100,7 @@ export const COMPANY_INFO = {
   mapAddress: "No.62/2, 2nd Floor, South Sivan Koil Street, Vadapalani, Chennai - 600 026"
 };
 
-export const ABOUT_US_IMAGE = "https://i.pinimg.com/1200x/7b/e4/68/7be468645bee9d8123b984215123a23c.jpg ";
+export const ABOUT_US_IMAGE = "/assets/images/9.png";
 
 export const GALLERY_ITEMS: GalleryItem[] = [
   { type: 'image', src: "https://picsum.photos/1200/800?random=10", alt: "Luxury Bedroom" },

@@ -6,7 +6,7 @@ import { MapPin, Phone, Mail } from 'lucide-react';
 const Footer: React.FC = () => {
   const location = useLocation();
   return (
-    <footer className="bg-white text-gold-deep pb-8 relative">
+    <footer id="footer" className="bg-white text-gold-deep pb-8 relative">
       {/* Glossy Gradient Separator Line (Matched to Navbar Style) */}
       <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-gold-light to-transparent opacity-60"></div>
 

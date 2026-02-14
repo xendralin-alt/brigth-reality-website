@@ -131,11 +131,11 @@ const Carousel: React.FC = () => {
             <div className="absolute bottom-0 left-0 right-0 h-24 md:h-40 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none" />
 
             {/* Optional Slide Caption */}
-            <div className={`absolute bottom-12 md:bottom-16 left-4 md:left-20 text-cream transition-opacity duration-1000 ${isTransitioning ? 'opacity-50' : 'opacity-100'}`}>
-              <h2 className="text-3xl md:text-5xl lg:text-6xl font-serif font-bold drop-shadow-xl text-white mb-2 md:mb-3">
+            <div className={`absolute bottom-6 md:bottom-16 left-4 md:left-20 text-cream transition-opacity duration-1000 ${isTransitioning ? 'opacity-50' : 'opacity-100'}`}>
+              <h2 className="text-base md:text-5xl lg:text-6xl font-serif font-bold drop-shadow-xl text-white mb-1 md:mb-3">
                 {slide.name}
               </h2>
-              <p className="text-lg md:text-xl lg:text-2xl font-sans tracking-wide text-gold-light drop-shadow-md font-medium">
+              <p className="text-xs md:text-xl lg:text-2xl font-sans tracking-wide text-gold-light drop-shadow-md font-medium">
                 {slide.subtitle}
               </p>
             </div>
@@ -143,22 +143,22 @@ const Carousel: React.FC = () => {
         ))}
       </div>
 
-      {/* Left Arrow - Hidden on mobile/tablet */}
+      {/* Left Arrow - Visible on all devices, smaller on mobile */}
       <button
         onClick={prevSlide}
-        className="hidden lg:block absolute left-4 md:left-8 top-1/2 -translate-y-1/2 text-white/70 hover:text-gold-light transition-all duration-300 transform hover:scale-125 drop-shadow-lg opacity-0 group-hover:opacity-100"
+        className="absolute left-2 lg:left-8 top-1/2 -translate-y-1/2 text-white/60 hover:text-gold-light transition-all duration-300 transform hover:scale-125 drop-shadow-lg lg:opacity-0 lg:group-hover:opacity-100"
         aria-label="Previous Slide"
       >
-        <ChevronLeft size={48} strokeWidth={1.5} />
+        <ChevronLeft className="w-4 h-4 lg:w-12 lg:h-12" strokeWidth={1.5} />
       </button>
 
-      {/* Right Arrow - Hidden on mobile/tablet */}
+      {/* Right Arrow - Visible on all devices, smaller on mobile */}
       <button
         onClick={nextSlide}
-        className="hidden lg:block absolute right-4 md:right-8 top-1/2 -translate-y-1/2 text-white/70 hover:text-gold-light transition-all duration-300 transform hover:scale-125 drop-shadow-lg opacity-0 group-hover:opacity-100"
+        className="absolute right-2 lg:right-8 top-1/2 -translate-y-1/2 text-white/60 hover:text-gold-light transition-all duration-300 transform hover:scale-125 drop-shadow-lg lg:opacity-0 lg:group-hover:opacity-100"
         aria-label="Next Slide"
       >
-        <ChevronRight size={48} strokeWidth={1.5} />
+        <ChevronRight className="w-4 h-4 lg:w-12 lg:h-12" strokeWidth={1.5} />
       </button>
 
       {/* Glossy Dot Indicators - 50% smaller */}

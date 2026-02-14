@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { SERVICES, COMPANY_INFO } from '../constants';
 
 const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
+  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -77,13 +78,12 @@ const Navbar: React.FC = () => {
       <div className="w-full max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12">
         <div className="flex justify-between items-center">
           {/* Logo Section */}
-          <Link to="/" className="flex flex-col items-start group">
-            <h1 className="text-2xl md:text-2xl lg:text-3xl font-serif font-bold text-gold-deep tracking-wide group-hover:text-gold transition-colors">
-              {COMPANY_INFO.name.toUpperCase()}
-            </h1>
-            <span className="text-[10px] md:text-[11px] text-gold-dark tracking-widest font-sans">
-              REAL ESTATE
-            </span>
+          <Link to="/" className="flex items-center group">
+            <img
+              src="/assets/images/logo.svg"
+              alt={COMPANY_INFO.name}
+              className="h-12 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+            />
           </Link>
 
           {/* Desktop Menu */}
@@ -176,7 +176,9 @@ const Navbar: React.FC = () => {
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center">
             <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              onClick={() => {
+                setMobileMenuOpen(!mobileMenuOpen);
+              }}
               className="text-gold-deep hover:text-gold transition-colors"
             >
               {mobileMenuOpen ? <X size={35} /> : <Menu size={35} />}
@@ -185,67 +187,110 @@ const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu Overlay - Glassmorphism Bubble Effect */}
       <div
-        className={`md:hidden absolute top-full left-0 w-full bg-cream border-b border-gold/10 shadow-2xl transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'max-h-screen opacity-100 py-6' : 'max-h-0 opacity-0 overflow-hidden'
+        className={`md:hidden absolute top-full left-0 w-full backdrop-blur-2xl border-b border-white/20 transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'max-h-screen opacity-100 py-6' : 'max-h-0 opacity-0 overflow-hidden'
           }`}
+        style={{
+          backgroundColor: 'rgba(255, 255, 255, 0.90)',
+          boxShadow: `
+            0 8px 32px rgba(0, 0, 0, 0.1),
+            0 2px 8px rgba(0, 0, 0, 0.05),
+            inset 0 1px 2px rgba(255, 255, 255, 0.3),
+            inset 0 -2px 4px rgba(0, 0, 0, 0.05)
+          `
+        }}
       >
-        <div className="px-6 space-y-6 flex flex-col items-center">
+        {/* Glossy shine overlay */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.05) 50%, transparent 100%)'
+          }}
+        />
+        <div className="relative px-6 space-y-6 flex flex-col items-center">
+          <Link
+            to="/"
+            className="text-gold-deep text-lg font-medium hover:text-gold uppercase tracking-wider transition-colors"
+            onClick={() => { setMobileMenuOpen(false); }}
+          >
+            Home
+          </Link>
+
           <button
             onClick={handleAboutClick}
-            className="text-gold-deep text-lg font-medium hover:text-gold uppercase tracking-wider"
+            className="text-gold-deep text-lg font-medium hover:text-gold uppercase tracking-wider transition-colors"
           >
             About Us
           </button>
 
           <Link
             to="/gallery"
-            className="text-gold-deep text-lg font-medium hover:text-gold uppercase tracking-wider"
-            onClick={() => setMobileMenuOpen(false)}
+            className="text-gold-deep text-lg font-medium hover:text-gold uppercase tracking-wider transition-colors"
+            onClick={() => { setMobileMenuOpen(false); }}
           >
             Gallery
           </Link>
-          <div className="w-full text-center">
-            <p className="text-gold-dark text-xs mb-4 font-bold uppercase tracking-widest border-b border-gold-light/20 pb-2 mx-12">Services</p>
-            {SERVICES.map((service) => (
-              <button
-                key={service.id}
-                className="block w-full py-3 text-center text-gold-deep/80 hover:text-gold font-medium"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setMobileMenuOpen(false);
-                  const targetId = `service-${service.id}`;
 
-                  if (location.pathname !== '/') {
-                    navigate(`/#${targetId}`);
-                  } else {
-                    const element = document.getElementById(targetId);
-                    if (element) {
-                      const headerOffset = 100;
-                      const elementPosition = element.getBoundingClientRect().top;
-                      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          {/* Services Collapsible Dropdown */}
+          <div className="w-full flex flex-col items-center">
+            <button
+              onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
+              className="flex items-center gap-2 text-gold-deep text-lg font-medium hover:text-gold uppercase tracking-wider transition-colors"
+            >
+              Services
+              {mobileServicesOpen
+                ? <ChevronUp size={20} className="transition-transform duration-200" />
+                : <ChevronDown size={20} className="transition-transform duration-200" />
+              }
+            </button>
 
-                      window.scrollTo({
-                        top: offsetPosition,
-                        behavior: "smooth"
-                      });
+            {/* Submenu Items */}
+            <div
+              className={`w-full overflow-hidden transition-all duration-300 ease-in-out ${mobileServicesOpen ? 'max-h-60 opacity-100 mt-3' : 'max-h-0 opacity-0 mt-0'
+                }`}
+            >
+              {SERVICES.map((service) => (
+                <button
+                  key={service.id}
+                  className="block w-full py-3 text-center text-gold-deep/80 hover:text-gold font-medium transition-colors"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setMobileMenuOpen(false);
+                    const targetId = `service-${service.id}`;
 
-                      element.classList.remove('service-highlight');
-                      void element.offsetWidth;
-                      element.classList.add('service-highlight');
+                    if (location.pathname !== '/') {
+                      navigate(`/#${targetId}`);
+                    } else {
+                      const element = document.getElementById(targetId);
+                      if (element) {
+                        const headerOffset = 100;
+                        const elementPosition = element.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
-                      setTimeout(() => element.classList.remove('service-highlight'), 3000);
+                        window.scrollTo({
+                          top: offsetPosition,
+                          behavior: "smooth"
+                        });
+
+                        element.classList.remove('service-highlight');
+                        void element.offsetWidth;
+                        element.classList.add('service-highlight');
+
+                        setTimeout(() => element.classList.remove('service-highlight'), 3000);
+                      }
                     }
-                  }
-                }}
-              >
-                {service.title}
-              </button>
-            ))}
+                  }}
+                >
+                  {service.title}
+                </button>
+              ))}
+            </div>
           </div>
+
           <button
             onClick={handleContactClick}
-            className="w-full max-w-xs px-6 py-3 bg-gold text-white font-bold rounded-full shadow-md"
+            className="w-full max-w-xs px-6 py-3 bg-gold hover:bg-gold-light text-white font-bold rounded-full shadow-lg hover:shadow-gold/40 transition-all"
           >
             CONTACT US
           </button>

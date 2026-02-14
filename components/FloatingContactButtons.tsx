@@ -1,5 +1,5 @@
-import React from 'react';
-import { Phone } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Phone, X, Copy, Check } from 'lucide-react';
 
 // WhatsApp Icon Component
 const WhatsAppIcon: React.FC<{ size?: number; className?: string }> = ({ size = 24, className = '' }) => (
@@ -24,37 +24,234 @@ const FloatingContactButtons: React.FC<FloatingContactButtonsProps> = ({
     phoneNumber,
     whatsappNumber
 }) => {
+    const [isFooterVisible, setIsFooterVisible] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+    const [showCallDialog, setShowCallDialog] = useState(false);
+    const [copied, setCopied] = useState(false);
+    const buttonsRef = useRef<HTMLDivElement>(null);
+
+    // Device detection
+    useEffect(() => {
+        const checkDevice = () => {
+            const width = window.innerWidth;
+            const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            setIsMobile(width < 768 || hasTouch);
+        };
+
+        checkDevice();
+        window.addEventListener('resize', checkDevice);
+        return () => window.removeEventListener('resize', checkDevice);
+    }, []);
+
+    // Footer intersection observer (mobile only)
+    useEffect(() => {
+        if (!isMobile) {
+            setIsFooterVisible(false);
+            return;
+        }
+
+        const footer = document.getElementById('footer');
+        if (!footer) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    setIsFooterVisible(entry.isIntersecting);
+                });
+            },
+            {
+                threshold: 0.1, // Trigger when 10% of footer is visible
+                rootMargin: '0px'
+            }
+        );
+
+        observer.observe(footer);
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [isMobile]);
+
     const handlePhoneClick = () => {
-        window.location.href = `tel:${phoneNumber}`;
+        if (isMobile) {
+            // Mobile: Direct phone call
+            window.location.href = `tel:${phoneNumber}`;
+        } else {
+            // Desktop: Show popup dialog
+            setShowCallDialog(true);
+        }
     };
 
     const handleWhatsAppClick = () => {
         if (whatsappNumber) {
-            // WhatsApp link format: https://wa.me/PHONENUMBER
             window.open(`https://wa.me/${whatsappNumber}`, '_blank');
         }
     };
 
-    return (
-        <div className="md:hidden fixed right-4 bottom-20 z-50 flex flex-col gap-4">
-            {/* Phone Call Button */}
-            <button
-                onClick={handlePhoneClick}
-                className="w-14 h-14 rounded-full bg-gold-deep hover:bg-gold-light shadow-2xl flex items-center justify-center border-2 border-white/30 active:scale-95"
-                aria-label="Call us"
-            >
-                <Phone size={24} className="text-white" strokeWidth={2.5} />
-            </button>
+    const handleCopyNumber = async () => {
+        try {
+            await navigator.clipboard.writeText(phoneNumber);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch (err) {
+            console.error('Failed to copy:', err);
+        }
+    };
 
-            {/* WhatsApp Button */}
-            <button
-                onClick={handleWhatsAppClick}
-                className="w-14 h-14 rounded-full bg-green-500 hover:bg-green-600 shadow-2xl flex items-center justify-center border-2 border-white/30 active:scale-95"
-                aria-label="WhatsApp us"
+    const handleCloseDialog = () => {
+        setShowCallDialog(false);
+        setCopied(false);
+    };
+
+    return (
+        <>
+            {/* Floating Buttons */}
+            <div
+                ref={buttonsRef}
+                className="fixed right-4 md:right-6 bottom-20 z-50 flex flex-col gap-4 transition-opacity duration-500"
+                style={{
+                    opacity: isFooterVisible ? 0 : 1,
+                    pointerEvents: isFooterVisible ? 'none' : 'auto'
+                }}
             >
-                <WhatsAppIcon size={26} className="text-white" />
-            </button>
-        </div>
+                {/* Phone Call Button with Bubble/Water Drop Effect */}
+                <button
+                    onClick={handlePhoneClick}
+                    className="group relative w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center active:scale-95 transition-transform overflow-hidden backdrop-blur-md bg-white/20"
+                    aria-label="Call us"
+                    style={{
+                        boxShadow: `
+                            0 8px 32px rgba(0, 0, 0, 0.1),
+                            0 2px 8px rgba(0, 0, 0, 0.05),
+                            inset 0 1px 2px rgba(255, 255, 255, 0.3),
+                            inset 0 -2px 4px rgba(0, 0, 0, 0.05)
+                        `
+                    }}
+                >
+                    {/* Glossy shine effect */}
+                    <div
+                        className="absolute inset-0 rounded-full pointer-events-none"
+                        style={{
+                            background: 'linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.05) 50%, transparent 100%)'
+                        }}
+                    />
+                    <Phone size={24} className="relative text-gold z-10" strokeWidth={2.5} />
+                </button>
+
+                {/* WhatsApp Button with Bubble/Water Drop Effect */}
+                <button
+                    onClick={handleWhatsAppClick}
+                    className="group relative w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center active:scale-95 transition-transform overflow-hidden backdrop-blur-md bg-white/20"
+                    aria-label="WhatsApp us"
+                    style={{
+                        boxShadow: `
+                            0 8px 32px rgba(0, 0, 0, 0.1),
+                            0 2px 8px rgba(0, 0, 0, 0.05),
+                            inset 0 1px 2px rgba(255, 255, 255, 0.3),
+                            inset 0 -2px 4px rgba(0, 0, 0, 0.05)
+                        `
+                    }}
+                >
+                    {/* Glossy shine effect */}
+                    <div
+                        className="absolute inset-0 rounded-full pointer-events-none"
+                        style={{
+                            background: 'linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.05) 50%, transparent 100%)'
+                        }}
+                    />
+                    <WhatsAppIcon size={26} className="relative text-green-600 z-10" />
+                </button>
+            </div>
+
+            {/* Call Dialog Popup (Desktop Only) */}
+            {showCallDialog && (
+                <div
+                    className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
+                    onClick={handleCloseDialog}
+                >
+                    <div
+                        className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 max-w-md w-full relative"
+                        onClick={(e) => e.stopPropagation()}
+                        style={{
+                            background: 'linear-gradient(135deg, #FAFAF5 0%, #F9D8A5 100%)'
+                        }}
+                    >
+                        {/* Close Button */}
+                        <button
+                            onClick={handleCloseDialog}
+                            className="absolute top-4 right-4 p-2 rounded-full hover:bg-black/5 transition-colors"
+                            aria-label="Close dialog"
+                        >
+                            <X size={24} className="text-gold-deep" />
+                        </button>
+
+                        {/* Phone Icon */}
+                        <div className="flex justify-center mb-6">
+                            <div
+                                className="w-16 h-16 rounded-full flex items-center justify-center relative overflow-hidden"
+                                style={{
+                                    background: 'linear-gradient(135deg, #D9B104 0%, #B09257 100%)'
+                                }}
+                            >
+                                <div
+                                    className="absolute inset-0 rounded-full"
+                                    style={{
+                                        background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 50%, transparent 100%)'
+                                    }}
+                                />
+                                <Phone size={32} className="text-white relative z-10" strokeWidth={2.5} />
+                            </div>
+                        </div>
+
+                        {/* Title */}
+                        <h3 className="text-2xl font-bold text-gold-deep text-center mb-2">
+                            Call Us
+                        </h3>
+
+                        {/* Subtitle */}
+                        <p className="text-gold-dark text-center mb-6">
+                            Call this number for any kind of enquiry
+                        </p>
+
+                        {/* Phone Number Display */}
+                        <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 mb-6 border border-gold/20">
+                            <p className="text-2xl font-bold text-gold-deep text-center tracking-wide">
+                                {phoneNumber}
+                            </p>
+                        </div>
+
+                        {/* Copy Button */}
+                        <button
+                            onClick={handleCopyNumber}
+                            className="w-full py-3 px-6 rounded-xl font-semibold text-white transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden"
+                            style={{
+                                background: copied
+                                    ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
+                                    : 'linear-gradient(135deg, #D9B104 0%, #B09257 100%)'
+                            }}
+                        >
+                            <div
+                                className="absolute inset-0"
+                                style={{
+                                    background: 'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%)'
+                                }}
+                            />
+                            {copied ? (
+                                <>
+                                    <Check size={20} className="relative z-10" />
+                                    <span className="relative z-10">Copied!</span>
+                                </>
+                            ) : (
+                                <>
+                                    <Copy size={20} className="relative z-10" />
+                                    <span className="relative z-10">Copy Number</span>
+                                </>
+                            )}
+                        </button>
+                    </div>
+                </div>
+            )}
+        </>
     );
 };
 

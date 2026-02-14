@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Carousel from '../components/Carousel';
 import AvailablePlotsScroller from '../components/AvailablePlotsScroller';
-import { Send, Map as MapIcon } from 'lucide-react';
+import CustomerReviewsScroller from '../components/CustomerReviewsScroller';
+import ServiceHighlights from '../components/ServiceHighlights';
+import FAQSection from '../components/FAQSection';
+import { Send, Map as MapIcon, MapPin } from 'lucide-react';
 import { COMPANY_INFO, ABOUT_US_IMAGE } from '../constants';
 
 const Home: React.FC = () => {
@@ -61,6 +64,26 @@ const Home: React.FC = () => {
         <Carousel />
       </div>
 
+      {/* Available Top Plots Badge - Floating Glossy Circle */}
+      <div className="flex justify-center py-4 md:py-5 bg-cream">
+        <div
+          className="animate-float inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-gold-deep font-semibold text-sm md:text-base tracking-wide border border-gold/20 backdrop-blur-md cursor-default select-none"
+          style={{
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(217,177,4,0.08) 50%, rgba(255,255,255,0.85) 100%)',
+            boxShadow: `
+              0 4px 20px rgba(217, 177, 4, 0.15),
+              0 2px 8px rgba(0, 0, 0, 0.06),
+              inset 0 1px 2px rgba(255, 255, 255, 0.6),
+              inset 0 -1px 3px rgba(217, 177, 4, 0.08)
+            `
+          }}
+        >
+          <MapPin size={18} className="text-gold" />
+          Available Top Plots
+          <MapPin size={18} className="text-gold" />
+        </div>
+      </div>
+
       {/* Available Plots Scroller */}
       <AvailablePlotsScroller />
 
@@ -107,6 +130,9 @@ const Home: React.FC = () => {
         </div>
       </section>
 
+      {/* Service Highlights Section */}
+      <ServiceHighlights />
+
       {/* Services Section */}
       <section id="services-section" className="py-10 md:py-14 bg-cream relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -117,54 +143,123 @@ const Home: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Service 1: Property Sales */}
-            <div id="service-1" className="bg-white p-6 md:p-8 rounded-xl shadow-lg border border-gold/10 hover:shadow-xl transition-shadow duration-300 group">
-              <div className="w-12 h-12 md:w-14 md:h-14 bg-peach/20 rounded-full flex items-center justify-center mb-4 md:mb-6 group-hover:bg-gold group-hover:text-white transition-colors duration-300 text-gold-deep">
+            <div id="service-1" className="bg-gradient-to-br from-white to-cream p-6 md:p-8 rounded-xl shadow-xl border border-gold/30 hover:shadow-2xl hover:shadow-gold/20 hover:border-gold hover:-translate-y-2 transition-all duration-300 group relative overflow-hidden">
+              {/* Decorative Background Icon */}
+              <div className="absolute -bottom-10 -right-10 text-gold/5 group-hover:text-gold/10 transition-colors duration-500 transform rotate-12 scale-150 pointer-events-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+              </div>
+
+              <div className="icon-circle w-12 h-12 md:w-14 md:h-14 bg-peach/20 rounded-full flex items-center justify-center mb-4 md:mb-6 group-hover:bg-gold group-hover:text-white transition-all duration-300 text-gold-deep group-hover:scale-110 group-hover:rotate-3 shadow-md relative z-10">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 md:w-8 md:h-8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
               </div>
-              <h3 className="text-xl font-serif font-bold text-gold-deep mb-3">Property Sales</h3>
-              <p className="text-sm md:text-base text-gold-deep/70 mb-4">Buying and selling of premium properties including:</p>
-              <ul className="text-sm text-gold-dark space-y-2 list-disc list-inside">
-                <li>Empty Land & Plots</li>
-                <li>Luxury Villas</li>
-                <li>Apartments & Flats</li>
-                <li>Individual Houses</li>
-                <li>Resale Properties</li>
+              <h3 className="text-xl font-serif font-bold text-gold-deep mb-3 group-hover:text-gold transition-colors duration-300">Property Sales</h3>
+              <p className="text-sm md:text-base text-gold-deep/70 mb-4 group-hover:text-gold-deep transition-colors duration-300">Buying and selling of premium properties including:</p>
+              <ul className="text-sm text-gold-dark space-y-2">
+                <li className="hover:text-gold hover:translate-x-2 transition-all duration-300 cursor-default flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gold flex-shrink-0"></span>
+                  <span>Empty Land & Plots</span>
+                </li>
+                <li className="hover:text-gold hover:translate-x-2 transition-all duration-300 cursor-default flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gold flex-shrink-0"></span>
+                  <span>Luxury Villas</span>
+                </li>
+                <li className="hover:text-gold hover:translate-x-2 transition-all duration-300 cursor-default flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gold flex-shrink-0"></span>
+                  <span>Apartments & Flats</span>
+                </li>
+                <li className="hover:text-gold hover:translate-x-2 transition-all duration-300 cursor-default flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gold flex-shrink-0"></span>
+                  <span>Individual Houses</span>
+                </li>
+                <li className="hover:text-gold hover:translate-x-2 transition-all duration-300 cursor-default flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gold flex-shrink-0"></span>
+                  <span>Resale Properties</span>
+                </li>
               </ul>
             </div>
 
             {/* Service 2: Documentation */}
-            <div id="service-2" className="bg-white p-6 md:p-8 rounded-xl shadow-lg border border-gold/10 hover:shadow-xl transition-shadow duration-300 group">
-              <div className="w-12 h-12 md:w-14 md:h-14 bg-peach/20 rounded-full flex items-center justify-center mb-4 md:mb-6 group-hover:bg-gold group-hover:text-white transition-colors duration-300 text-gold-deep">
+            <div id="service-2" className="bg-gradient-to-br from-white to-cream p-6 md:p-8 rounded-xl shadow-xl border border-gold/30 hover:shadow-2xl hover:shadow-gold/20 hover:border-gold hover:-translate-y-2 transition-all duration-300 group relative overflow-hidden">
+              {/* Decorative Background Icon */}
+              <div className="absolute -bottom-10 -right-10 text-gold/5 group-hover:text-gold/10 transition-colors duration-500 transform rotate-12 scale-150 pointer-events-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              </div>
+
+              <div className="icon-circle w-12 h-12 md:w-14 md:h-14 bg-peach/20 rounded-full flex items-center justify-center mb-4 md:mb-6 group-hover:bg-gold group-hover:text-white transition-all duration-300 text-gold-deep group-hover:scale-110 group-hover:rotate-3 shadow-md relative z-10">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 md:w-8 md:h-8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
               </div>
-              <h3 className="text-xl font-serif font-bold text-gold-deep mb-3">Documentation</h3>
-              <p className="text-sm md:text-base text-gold-deep/70 mb-4">Expert consultation and clarification for legal documents:</p>
-              <ul className="text-sm text-gold-dark space-y-2 list-disc list-inside">
-                <li>Patta (Land Revenue Records)</li>
-                <li>EC (Encumbrance Certificates)</li>
-                <li>Title Deed Verification</li>
-                <li>Legal Clearance</li>
+              <h3 className="text-xl font-serif font-bold text-gold-deep mb-3 group-hover:text-gold transition-colors duration-300">Documentation</h3>
+              <p className="text-sm md:text-base text-gold-deep/70 mb-4 group-hover:text-gold-deep transition-colors duration-300">Expert consultation and clarification for legal documents:</p>
+              <ul className="text-sm text-gold-dark space-y-2">
+                <li className="hover:text-gold hover:translate-x-2 transition-all duration-300 cursor-default flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gold flex-shrink-0"></span>
+                  <span>Patta (Land Revenue Records)</span>
+                </li>
+                <li className="hover:text-gold hover:translate-x-2 transition-all duration-300 cursor-default flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gold flex-shrink-0"></span>
+                  <span>EC (Encumbrance Certificates)</span>
+                </li>
+                <li className="hover:text-gold hover:translate-x-2 transition-all duration-300 cursor-default flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gold flex-shrink-0"></span>
+                  <span>Title Deed Verification</span>
+                </li>
+                <li className="hover:text-gold hover:translate-x-2 transition-all duration-300 cursor-default flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gold flex-shrink-0"></span>
+                  <span>Legal Clearance</span>
+                </li>
               </ul>
             </div>
 
             {/* Service 3: Registration */}
-            <div id="service-3" className="bg-white p-6 md:p-8 rounded-xl shadow-lg border border-gold/10 hover:shadow-xl transition-shadow duration-300 group">
-              <div className="w-12 h-12 md:w-14 md:h-14 bg-peach/20 rounded-full flex items-center justify-center mb-4 md:mb-6 group-hover:bg-gold group-hover:text-white transition-colors duration-300 text-gold-deep">
+            <div id="service-3" className="bg-gradient-to-br from-white to-cream p-6 md:p-8 rounded-xl shadow-xl border border-gold/30 hover:shadow-2xl hover:shadow-gold/20 hover:border-gold hover:-translate-y-2 transition-all duration-300 group relative overflow-hidden">
+              {/* Decorative Background Icon */}
+              <div className="absolute -bottom-10 -right-10 text-gold/5 group-hover:text-gold/10 transition-colors duration-500 transform rotate-12 scale-150 pointer-events-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+              </div>
+
+              <div className="icon-circle w-12 h-12 md:w-14 md:h-14 bg-peach/20 rounded-full flex items-center justify-center mb-4 md:mb-6 group-hover:bg-gold group-hover:text-white transition-all duration-300 text-gold-deep group-hover:scale-110 group-hover:rotate-3 shadow-md relative z-10">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 md:w-8 md:h-8"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
               </div>
-              <h3 className="text-xl font-serif font-bold text-gold-deep mb-3">Registration</h3>
-              <p className="text-sm md:text-base text-gold-deep/70 mb-4">Seamless property registration process handling.</p>
-              <div className="flex items-center space-x-2 mb-4">
+              <h3 className="text-xl font-serif font-bold text-gold-deep mb-3 group-hover:text-gold transition-colors duration-300">Registration</h3>
+              <p className="text-sm md:text-base text-gold-deep/70 mb-4 group-hover:text-gold-deep transition-colors duration-300">Seamless property registration process handling.</p>
+              <div className="flex items-center space-x-2 mb-4 group-hover:scale-105 transition-transform duration-300">
                 <span className="text-2xl font-bold text-gold">100,000+</span>
                 <span className="text-xs text-gold-dark uppercase font-semibold">Registrations<br />Completed</span>
               </div>
-              <p className="text-sm text-gold-dark italic">
+              <p className="text-sm text-gold-dark italic group-hover:text-gold transition-colors duration-300">
                 "Our reputation as an auspicious ('Kairasi') company speaks for itself."
               </p>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Verified Reviews Badge - Floating Glossy Circle */}
+      <div className="flex justify-center py-4 md:py-5 bg-cream">
+        <div
+          className="animate-float inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-gold-deep font-semibold text-sm md:text-base tracking-wide border border-gold/20 backdrop-blur-md cursor-default select-none"
+          style={{
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(217,177,4,0.08) 50%, rgba(255,255,255,0.85) 100%)',
+            boxShadow: `
+              0 4px 20px rgba(217, 177, 4, 0.15),
+              0 2px 8px rgba(0, 0, 0, 0.06),
+              inset 0 1px 2px rgba(255, 255, 255, 0.6),
+              inset 0 -1px 3px rgba(217, 177, 4, 0.08)
+            `
+          }}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="#D9B104" stroke="#D9B104" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+          </svg>
+          Verified Reviews
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="#D9B104" stroke="#D9B104" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+          </svg>
+        </div>
+      </div>
+
+      {/* Customer Reviews Scroller */}
+      <CustomerReviewsScroller />
 
       {/* Contact Section */}
       <section id="contact-section" className="py-10 md:py-14 bg-peach/20 relative">
@@ -310,7 +405,11 @@ const Home: React.FC = () => {
           </div>
         </div>
       </section>
-    </div>
+
+      {/* FAQ Section */}
+      <FAQSection />
+
+    </div >
   );
 };
 
