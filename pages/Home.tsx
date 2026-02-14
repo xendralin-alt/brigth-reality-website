@@ -46,12 +46,133 @@ const Home: React.FC = () => {
     setFormState(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Simulate form submission
-    console.log('Form Submitted:', formState);
-    alert('Thank you for enriching yourself with Bright Reality. We will contact you shortly.');
-    setFormState({ name: '', whatsapp: '', mobile: '', email: '', message: '' });
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+
+  console.log('Form Submitted:', formState);
+  alert('Thank you for enriching yourself with Bright Reality. We will contact you shortly.');
+
+  setFormState({
+    name: '',
+    whatsapp: '',
+    mobile: '',
+    email: '',
+    message: ''
+  });
+
+
+    <form
+  onSubmit={handleSubmit}
+  className="space-y-6"
+  autoComplete="on"
+>
+
+  {/* Name */}
+  <div className="group">
+    <label className="block text-sm font-bold text-gold-dark mb-2 uppercase tracking-normal">
+      Full Name
+    </label>
+    <input
+      type="text"
+      name="name"
+      autoComplete="name"
+      value={formState.name}
+      onChange={handleInputChange}
+      className="block w-full px-4 py-3 text-gold-deep bg-peach/10 border border-gold-light/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent transition-all"
+      placeholder="Enter your full name"
+      required
+    />
+  </div>
+
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    {/* WhatsApp */}
+    <div className="group">
+      <label className="block text-sm font-bold text-gold-dark mb-2 uppercase tracking-normal">
+        WhatsApp <span className="text-xs text-gold-dust lowercase font-normal">(w/ Code)</span>
+      </label>
+      <input
+        type="tel"
+        name="whatsapp"
+        autoComplete="tel"
+        inputMode="numeric"
+        value={formState.whatsapp}
+        onChange={handleInputChange}
+        className="block w-full px-4 py-3 text-gold-deep bg-peach/10 border border-gold-light/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent transition-all"
+        placeholder="+91 9000010000"
+        required
+      />
+    </div>
+
+    {/* Mobile */}
+    <div className="group">
+      <label className="block text-sm font-bold text-gold-dark mb-2 uppercase tracking-normal">
+        Mobile Number
+      </label>
+      <input
+        type="tel"
+        name="mobile"
+        autoComplete="tel-national"
+        inputMode="numeric"
+        value={formState.mobile}
+        onChange={handleInputChange}
+        className="block w-full px-4 py-3 text-gold-deep bg-peach/10 border border-gold-light/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent transition-all"
+        placeholder="+91 9000010000"
+        required
+      />
+    </div>
+
+  </div>
+
+  {/* Email */}
+  <div className="group">
+    <label className="block text-sm font-bold text-gold-dark mb-2 uppercase tracking-normal">
+      Email Address
+    </label>
+    <input
+      type="email"
+      name="email"
+      autoComplete="email"
+      value={formState.email}
+      onChange={handleInputChange}
+      className="block w-full px-4 py-3 text-gold-deep bg-peach/10 border border-gold-light/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent transition-all"
+      placeholder="you@example.com"
+      required
+    />
+  </div>
+
+  {/* Message */}
+  <div className="group">
+    <label className="block text-sm font-bold text-gold-dark mb-2 uppercase tracking-normal">
+      Message <span className="text-xs text-gold-dust lowercase font-normal">(Max 500 words)</span>
+    </label>
+    <textarea
+      name="message"
+      autoComplete="off"
+      value={formState.message}
+      onChange={handleInputChange}
+      rows={4}
+      maxLength={500}
+      className="block w-full px-4 py-3 text-gold-deep bg-peach/10 border border-gold-light/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent transition-all resize-none"
+      placeholder="How can we enrich you?"
+      required
+    />
+    <p className="text-xs text-right text-gold-dark/60 mt-1">
+      {formState.message.length}/500
+    </p>
+  </div>
+
+  {/* Submit Button */}
+  <button
+    type="submit"
+    className="w-full py-4 bg-gradient-to-r from-gold to-gold-light text-white font-bold text-lg rounded-lg shadow-lg hover:shadow-gold/50 transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center uppercase tracking-widest"
+  >
+    <Send className="mr-2" size={20} /> Send Message
+  </button>
+
+</form>
+
   };
 
   // Google Maps location query
