@@ -117,7 +117,7 @@ const FloatingContactButtons: React.FC<FloatingContactButtonsProps> = ({
                 {/* Phone Call Button with Bubble/Water Drop Effect */}
                 <button
                     onClick={handlePhoneClick}
-                    className="group relative w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center active:scale-95 transition-transform overflow-hidden backdrop-blur-md bg-white/20"
+                    className="group relative w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center active:scale-95 transition-transform overflow-hidden backdrop-blur-md bg-white/20 animate-float hover:animate-none hover:scale-110 transition-all duration-300"
                     aria-label="Call us"
                     style={{
                         boxShadow: `
@@ -141,9 +141,10 @@ const FloatingContactButtons: React.FC<FloatingContactButtonsProps> = ({
                 {/* WhatsApp Button with Bubble/Water Drop Effect */}
                 <button
                     onClick={handleWhatsAppClick}
-                    className="group relative w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center active:scale-95 transition-transform overflow-hidden backdrop-blur-md bg-white/20"
+                    className="group relative w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center active:scale-95 transition-transform overflow-hidden backdrop-blur-md bg-white/20 animate-float hover:animate-none hover:scale-110 transition-all duration-300"
                     aria-label="WhatsApp us"
                     style={{
+                        animationDelay: '1.25s', // Stagger the float animation
                         boxShadow: `
                             0 8px 32px rgba(0, 0, 0, 0.1),
                             0 2px 8px rgba(0, 0, 0, 0.05),

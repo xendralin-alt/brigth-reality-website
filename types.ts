@@ -12,6 +12,7 @@ export interface ServiceItem {
   id: number;
   title: string;
   link: string;
+  slug: string;
 }
 
 export interface SocialLink {

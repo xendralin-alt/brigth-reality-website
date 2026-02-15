@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import Carousel from '../components/Carousel';
 import AvailablePlotsScroller from '../components/AvailablePlotsScroller';
 import CustomerReviewsScroller from '../components/CustomerReviewsScroller';
 import ServiceHighlights from '../components/ServiceHighlights';
+import HeroHighlight from '../components/HeroHighlight';
 import FAQSection from '../components/FAQSection';
 import { Send, Map as MapIcon, MapPin } from 'lucide-react';
-import { COMPANY_INFO, ABOUT_US_IMAGE } from '../constants';
+import { COMPANY_INFO, ABOUT_US_IMAGE, SERVICES } from '../constants';
+import ConfirmationPopup from '../components/ConfirmationPopup';
+import SEO from '../components/SEO';
 
 const Home: React.FC = () => {
   const [formState, setFormState] = useState({
@@ -16,186 +19,263 @@ const Home: React.FC = () => {
     email: '',
     message: ''
   });
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error' | 'loading'>('success');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const location = useLocation();
+  const { serviceSlug } = useParams<{ serviceSlug: string }>();
 
-  // Scroll to section and highlight if hash exists
+  // Schema Markup for LocalBusiness
+  const localBusinessSchema = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "RealEstateAgent",
+    "name": COMPANY_INFO.name,
+    "image": "https://www.kushibusy.in/assets/images/logo.svg",
+    "@id": "https://www.kushibusy.in",
+    "url": "https://www.kushibusy.in",
+    "telephone": COMPANY_INFO.phone,
+    "priceRange": "₹₹",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "No.62/2, 2nd Floor, South Sivan Koil Street, Vadapalani",
+      "addressLocality": "Chennai",
+      "postalCode": "600026",
+      "addressCountry": "IN"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 13.0471321,
+      "longitude": 80.2125164
+    },
+    "areaServed": [
+      "Chennai",
+      "Kancheepuram",
+      "Chengalpattu",
+      "Sriperumbudhur",
+      "Tiruvallur",
+      "Poonamllee",
+      "Tambaram",
+      "Pallavaram"
+    ],
+    "sameAs": [
+      "https://www.instagram.com/kushibusy/",
+      "https://www.youtube.com/@KUSHIBUSY",
+      "https://facebook.com"
+    ]
+  });
+
+  // Scroll Handler: Automatically scrolls to the section matching the URL path
   useEffect(() => {
-    if (location.hash) {
-      const id = location.hash.substring(1);
-      const element = document.getElementById(id);
+    const path = location.pathname;
 
-      if (element) {
-        // Delay slighty to ensure layout is ready
-        setTimeout(() => {
-          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Define mapping from path to section ID
+    const pathToSection: { [key: string]: string } = {
+      '/aboutus': 'about-section',
+      '/contact': 'contact-section',
+      '/services': 'services-section',
+      '/property-sales': 'service-1', // Mapping specific service slugs to their card IDs
+      '/documentation': 'service-2',
+      '/registration': 'service-3'
+    };
 
-          if (id.startsWith('service-')) {
-            element.classList.add('service-highlight');
-            setTimeout(() => {
-              element.classList.remove('service-highlight');
-            }, 3000);
-          }
-        }, 300);
+    const sectionId = pathToSection[path];
+
+    // If we're on a service page based on dynamic slug
+    if (!sectionId && serviceSlug) {
+      // Find the service by slug to get its ID if we had dynamic IDs, 
+      // but for now we map known slugs manually above or default to top of services
+      if (['property-sales', 'documentation', 'registration'].includes(serviceSlug)) {
+        // Logic handled by the map above if exact match, or fallback here
       }
     }
-  }, [location]);
+
+    if (sectionId) {
+      // Small timeout to ensure DOM is ready (especially when coming from another page)
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          // Calculate position with offset for fixed navbar (approx 100px)
+          const headerOffset = 100;
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth"
+          });
+
+          // Trigger Highlight Animation ONLY for service tiles
+          if (['service-1', 'service-2', 'service-3'].includes(sectionId)) {
+            // 1. Remove from all first to reset
+            ['service-1', 'service-2', 'service-3'].forEach(id => {
+              document.getElementById(id)?.classList.remove('service-highlight');
+            });
+
+            // 2. Add to current target after a small delay to ensure scroll starts
+            setTimeout(() => {
+              element.classList.add('service-highlight');
+
+              // 3. Remove after animation (3s)
+              setTimeout(() => {
+                element.classList.remove('service-highlight');
+              }, 3000);
+            }, 500);
+          }
+        }
+      }, 100);
+    } else if (path === '/' && !location.hash) {
+      // Scroll to top if just visiting home
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [location.pathname, serviceSlug]);
+
+  // Phone formatting logic
+  const formatPhoneNumber = (value: string) => {
+    // Remove all non-numeric characters except +
+    let cleaned = value.replace(/[^\d+]/g, '');
+
+    // Ensure + is only at the start
+    if (cleaned.includes('+')) {
+      cleaned = '+' + cleaned.replace(/\+/g, '');
+    }
+
+    // Auto-formatting based on country code
+    if (cleaned.startsWith('+91')) {
+      // Format: +91 XXXXX XXXXX
+      const match = cleaned.match(/^(\+91)(\d{0,5})(\d{0,5})$/);
+      if (match) {
+        return [match[1], match[2], match[3]].filter(Boolean).join(' ');
+      }
+    } else if (cleaned.startsWith('+1')) {
+      // Format: +1 XXX XXX XXXX
+      const match = cleaned.match(/^(\+1)(\d{0,3})(\d{0,3})(\d{0,4})$/);
+      if (match) {
+        return [match[1], match[2], match[3], match[4]].filter(Boolean).join(' ');
+      }
+    }
+
+    return cleaned;
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+
+    // Restrict mobile and whatsapp to numbers and +, and apply formatting
+    if (name === 'mobile' || name === 'whatsapp') {
+      // Allow + only at the beginning, otherwise nums only
+      if (!/^[+]?[0-9\s]*$/.test(value)) {
+        return;
+      }
+
+      const formattedValue = formatPhoneNumber(value);
+      setFormState(prev => ({ ...prev, [name]: formattedValue }));
+      return;
+    }
+
     setFormState(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
+    // Show loading state immediately
+    setToastMessage("Sending...");
+    setToastType('loading');
+    setShowConfirmation(true);
 
-  console.log('Form Submitted:', formState);
-  alert('Thank you for enriching yourself with Bright Reality. We will contact you shortly.');
+    // URL is now loaded from environment variables for security
+    // See .env.local for the actual URL configuration
+    const SCRIPT_URL = import.meta.env.VITE_GOOGLE_APPS_SCRIPT_URL || "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL";
 
-  setFormState({
-    name: '',
-    whatsapp: '',
-    mobile: '',
-    email: '',
-    message: ''
-  });
+    try {
+      // Strict Email Validation Regex ("Fact Check")
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formState.email)) {
+        throw new Error("Please enter a valid email address.");
+      }
 
+      // Basic validation (WhatsApp is optional now)
+      if (!formState.name || !formState.mobile || !formState.message) {
+        throw new Error("Please fill in all required fields.");
+      }
 
-    <form
-  onSubmit={handleSubmit}
-  className="space-y-6"
-  autoComplete="on"
->
+      // If the URL is still the placeholder, we'll simulate a success for testing UI
+      if (SCRIPT_URL === "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL") {
+        console.warn("Google Apps Script URL not set. Simulating success.");
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate delay
 
-  {/* Name */}
-  <div className="group">
-    <label className="block text-sm font-bold text-gold-dark mb-2 uppercase tracking-normal">
-      Full Name
-    </label>
-    <input
-      type="text"
-      name="name"
-      autoComplete="name"
-      value={formState.name}
-      onChange={handleInputChange}
-      className="block w-full px-4 py-3 text-gold-deep bg-peach/10 border border-gold-light/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent transition-all"
-      placeholder="Enter your full name"
-      required
-    />
-  </div>
+        setToastMessage("Thanks For Showing Interest, Will Call You Shortly");
+        setToastType('success');
+        // Keep confirmation shown
+        setFormState({ name: '', whatsapp: '', mobile: '', email: '', message: '' });
+        setIsSubmitting(false);
+        return;
+      }
 
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      const response = await fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors", // Important for Google Apps Script
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formState,
+          // Prepend ' to phone numbers to force Google Sheets to treat them as text
+          // This prevents the #ERROR! caused by values starting with +
+          mobile: formState.mobile ? `'${formState.mobile}` : '',
+          whatsapp: formState.whatsapp ? `'${formState.whatsapp}` : '',
+        }),
+      });
 
-    {/* WhatsApp */}
-    <div className="group">
-      <label className="block text-sm font-bold text-gold-dark mb-2 uppercase tracking-normal">
-        WhatsApp <span className="text-xs text-gold-dust lowercase font-normal">(w/ Code)</span>
-      </label>
-      <input
-        type="tel"
-        name="whatsapp"
-        autoComplete="tel"
-        inputMode="numeric"
-        value={formState.whatsapp}
-        onChange={handleInputChange}
-        className="block w-full px-4 py-3 text-gold-deep bg-peach/10 border border-gold-light/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent transition-all"
-        placeholder="+91 9000010000"
-        required
-      />
-    </div>
+      // With no-cors, we can't check response.ok or response.json()
+      // We assume success if no network error occurred
+      // Update to success state ONLY after fetch completes
+      setToastMessage("Thanks For Showing Interest, Will Call You Shortly");
+      setToastType('success');
+      // Keep confirmation shown
+      setFormState({ name: '', whatsapp: '', mobile: '', email: '', message: '' });
 
-    {/* Mobile */}
-    <div className="group">
-      <label className="block text-sm font-bold text-gold-dark mb-2 uppercase tracking-normal">
-        Mobile Number
-      </label>
-      <input
-        type="tel"
-        name="mobile"
-        autoComplete="tel-national"
-        inputMode="numeric"
-        value={formState.mobile}
-        onChange={handleInputChange}
-        className="block w-full px-4 py-3 text-gold-deep bg-peach/10 border border-gold-light/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent transition-all"
-        placeholder="+91 9000010000"
-        required
-      />
-    </div>
-
-  </div>
-
-  {/* Email */}
-  <div className="group">
-    <label className="block text-sm font-bold text-gold-dark mb-2 uppercase tracking-normal">
-      Email Address
-    </label>
-    <input
-      type="email"
-      name="email"
-      autoComplete="email"
-      value={formState.email}
-      onChange={handleInputChange}
-      className="block w-full px-4 py-3 text-gold-deep bg-peach/10 border border-gold-light/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent transition-all"
-      placeholder="you@example.com"
-      required
-    />
-  </div>
-
-  {/* Message */}
-  <div className="group">
-    <label className="block text-sm font-bold text-gold-dark mb-2 uppercase tracking-normal">
-      Message <span className="text-xs text-gold-dust lowercase font-normal">(Max 500 words)</span>
-    </label>
-    <textarea
-      name="message"
-      autoComplete="off"
-      value={formState.message}
-      onChange={handleInputChange}
-      rows={4}
-      maxLength={500}
-      className="block w-full px-4 py-3 text-gold-deep bg-peach/10 border border-gold-light/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent transition-all resize-none"
-      placeholder="How can we enrich you?"
-      required
-    />
-    <p className="text-xs text-right text-gold-dark/60 mt-1">
-      {formState.message.length}/500
-    </p>
-  </div>
-
-  {/* Submit Button */}
-  <button
-    type="submit"
-    className="w-full py-4 bg-gradient-to-r from-gold to-gold-light text-white font-bold text-lg rounded-lg shadow-lg hover:shadow-gold/50 transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center uppercase tracking-widest"
-  >
-    <Send className="mr-2" size={20} /> Send Message
-  </button>
-
-</form>
-
+    } catch (error: any) {
+      console.error("Error submitting form:", error);
+      setToastMessage(error.message || "Something Went Wrong Try again later");
+      setToastType('error');
+      // Keep confirmation shown
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Google Maps location query
   const mapLocationQuery = COMPANY_INFO.mapAddress;
 
   return (
-    <div className="w-full bg-cream pt-[76px] md:pt-[122px]">
+    <div className="w-full bg-cream pt-[80px] md:pt-[105px]">
+      <SEO
+        title="Bright Reality | Available Plots in Avadi, Chennai"
+        description="Looking for plots in Avadi or Chennai? Bright Reality offers premium land plots, villas, and registration services. Contact us today!"
+        canonical={`https://www.kushibusy.in${location.pathname === '/' ? '' : location.pathname}`}
+        schema={localBusinessSchema}
+      />
+      {/* Hero Highlight Section */}
+      <HeroHighlight />
+
       {/* Hero Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6 pt-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6 pt-0">
         <Carousel />
       </div>
 
       {/* Available Top Plots Badge - Floating Glossy Circle */}
-      <div className="flex justify-center py-4 md:py-5 bg-cream">
+      <div className="flex justify-center pt-4 pb-2 md:pt-5 md:pb-2.5 bg-cream">
         <div
           className="animate-float inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-gold-deep font-semibold text-sm md:text-base tracking-wide border border-gold/20 backdrop-blur-md cursor-default select-none"
           style={{
-            background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(217,177,4,0.08) 50%, rgba(255,255,255,0.85) 100%)',
+            background: 'rgba(255, 255, 255, 0.95)',
             boxShadow: `
               0 4px 20px rgba(217, 177, 4, 0.15),
-              0 2px 8px rgba(0, 0, 0, 0.06),
-              inset 0 1px 2px rgba(255, 255, 255, 0.6),
-              inset 0 -1px 3px rgba(217, 177, 4, 0.08)
+              0 2px 8px rgba(0, 0, 0, 0.06)
             `
           }}
         >
@@ -218,7 +298,7 @@ const Home: React.FC = () => {
             {/* Image (4:5 Ratio) */}
             <div className="w-full md:w-5/12 relative group">
 
-              <div className="aspect-[4/5] overflow-hidden rounded-lg shadow-2xl relative z-10">
+              <div className="aspect-square overflow-hidden rounded-full shadow-2xl relative z-10 border-4 border-gold/20">
                 <img
                   src={ABOUT_US_IMAGE}
                   alt="About Bright Reality"
@@ -356,16 +436,14 @@ const Home: React.FC = () => {
       </section>
 
       {/* Verified Reviews Badge - Floating Glossy Circle */}
-      <div className="flex justify-center py-4 md:py-5 bg-cream">
+      <div className="flex justify-center pt-4 pb-2 md:pt-5 md:pb-2.5 bg-cream">
         <div
           className="animate-float inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-gold-deep font-semibold text-sm md:text-base tracking-wide border border-gold/20 backdrop-blur-md cursor-default select-none"
           style={{
-            background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(217,177,4,0.08) 50%, rgba(255,255,255,0.85) 100%)',
+            background: 'rgba(255, 255, 255, 0.95)',
             boxShadow: `
               0 4px 20px rgba(217, 177, 4, 0.15),
-              0 2px 8px rgba(0, 0, 0, 0.06),
-              inset 0 1px 2px rgba(255, 255, 255, 0.6),
-              inset 0 -1px 3px rgba(217, 177, 4, 0.08)
+              0 2px 8px rgba(0, 0, 0, 0.06)
             `
           }}
         >
@@ -395,13 +473,13 @@ const Home: React.FC = () => {
             {/* Map Side (Left) */}
             <div className="w-full md:w-1/2 h-[500px] md:h-auto relative order-2 md:order-1">
               <a
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapLocationQuery)}`}
+                href={COMPANY_INFO.googleMapLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block w-full h-full relative group"
               >
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3610.178510024328!2d55.27218771500384!3d25.19720188389619!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f43348a67e24b%3A0xff45e502e1ceb7e2!2sBurj%20Khalifa!5e0!3m2!1sen!2sae!4v1646205260840!5m2!1sen!2sae"
+                  src={COMPANY_INFO.mapEmbedSrc}
                   width="100%"
                   height="100%"
                   style={{ border: 0, filter: 'grayscale(0.2) sepia(0.1)' }}
@@ -449,7 +527,7 @@ const Home: React.FC = () => {
                   {/* WhatsApp */}
                   <div className="group">
                     <label className="block text-sm font-bold text-gold-dark mb-2 uppercase tracking-normal">
-                      WhatsApp <span className="text-xs text-gold-dust lowercase font-normal">(w/ Code)</span>
+                      WhatsApp <span className="text-xs text-gold-dust lowercase font-normal">(w/ Code) - Optional</span>
                     </label>
                     <input
                       type="tel"
@@ -458,7 +536,6 @@ const Home: React.FC = () => {
                       onChange={handleInputChange}
                       className="block w-full px-4 py-3 text-gold-deep bg-peach/10 border border-gold-light/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent transition-all"
                       placeholder="+91 9000010000"
-                      required
                     />
                   </div>
 
@@ -529,6 +606,13 @@ const Home: React.FC = () => {
 
       {/* FAQ Section */}
       <FAQSection />
+
+      <ConfirmationPopup
+        isOpen={showConfirmation}
+        onClose={() => setShowConfirmation(false)}
+        message={toastMessage}
+        type={toastType}
+      />
 
     </div >
   );

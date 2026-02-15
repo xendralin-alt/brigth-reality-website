@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, ChevronLeft, ChevronRight, Play } from 'lucide-react';
 import { GALLERY_ITEMS } from '../constants';
+import SEO from '../components/SEO';
 
 // Enhanced Data Structure
 interface GalleryItem {
@@ -86,6 +87,11 @@ const Gallery: React.FC = () => {
   const isDragging = useRef<boolean>(false);
   const dragStart = useRef({ x: 0, y: 0 });
   const overlayTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   // Lock body scroll when lightbox is open - Enhanced
   useEffect(() => {
@@ -320,6 +326,11 @@ const Gallery: React.FC = () => {
 
   return (
     <div className="pt-24 md:pt-32 pb-8 md:pb-12 min-h-screen bg-cream">
+      <SEO
+        title="Gallery - Our Projects"
+        description="View our gallery of luxury villas, plots, and real estate projects in Chennai and Avadi."
+        canonical="https://www.kushibusy.in/gallery"
+      />
       <div className="max-w-[1400px] mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
         <div className="text-center mb-8 md:mb-12 relative">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-gold-deep mb-3 md:mb-4">

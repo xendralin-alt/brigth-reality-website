@@ -164,3 +164,18 @@ button {
   animation: page-enter 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
   will-change: transform, opacity, filter;
 }
+
+/* Hover Lift Animation */
+@keyframes hover-lift {
+  0% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(-5px);
+  }
+}
+
+.hover-lift:hover {
+  animation: hover-lift 0.3s forwards ease-out;
+}

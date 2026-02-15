@@ -20,50 +20,13 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleContactClick = () => {
-    if (location.pathname !== '/') {
-      navigate('/');
-      setTimeout(() => {
-        const contactSection = document.getElementById('contact-section');
-        contactSection?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-    } else {
-      const contactSection = document.getElementById('contact-section');
-      contactSection?.scrollIntoView({ behavior: 'smooth' });
-    }
-    setMobileMenuOpen(false);
-  };
-
-  const handleAboutClick = () => {
-    if (location.pathname !== '/') {
-      navigate('/');
-      setTimeout(() => {
-        const aboutSection = document.getElementById('about-section');
-        aboutSection?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-    } else {
-      const aboutSection = document.getElementById('about-section');
-      aboutSection?.scrollIntoView({ behavior: 'smooth' });
-    }
-    setMobileMenuOpen(false);
-  };
-
-  const handleServicesClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setServicesOpen(false);
-    setMobileMenuOpen(false);
-
-    if (location.pathname !== '/') {
-      navigate('/');
-      setTimeout(() => {
-        const servicesSection = document.getElementById('services-section');
-        servicesSection?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-    } else {
-      const servicesSection = document.getElementById('services-section');
-      servicesSection?.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <nav
@@ -88,12 +51,12 @@ const Navbar: React.FC = () => {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-10 lg:space-x-12">
-            <button
-              onClick={handleAboutClick}
+            <Link
+              to="/aboutus"
               className="text-gold-deep hover:text-gold font-medium transition-colors duration-200 uppercase tracking-normal text-sm lg:text-base"
             >
               About Us
-            </button>
+            </Link>
 
             <Link
               to="/gallery"
@@ -108,12 +71,15 @@ const Navbar: React.FC = () => {
               onMouseEnter={() => setServicesOpen(true)}
               onMouseLeave={() => setServicesOpen(false)}
             >
-              <button
-                onClick={handleServicesClick}
+              <Link
+                to="/services"
                 className="flex items-center text-gold-deep hover:text-gold font-medium transition-colors duration-200 uppercase tracking-normal text-sm lg:text-base"
+                onClick={(e) => {
+                  setServicesOpen(false);
+                }}
               >
                 Services <ChevronDown size={16} className="ml-1" />
-              </button>
+              </Link>
 
               {/* Dropdown Menu */}
               <div
@@ -122,55 +88,27 @@ const Navbar: React.FC = () => {
               >
                 <div className="py-2">
                   {SERVICES.map((service) => (
-                    <button
+                    <Link
                       key={service.id}
-                      onClick={(e) => {
-                        e.preventDefault();
+                      to={`/${service.slug}`}
+                      onClick={() => {
                         setServicesOpen(false);
-                        setMobileMenuOpen(false);
-                        const targetId = `service-${service.id}`;
-
-                        if (location.pathname !== '/') {
-                          navigate(`/#${targetId}`);
-                        } else {
-                          // Manually handle scroll and highlight if already on page
-                          const element = document.getElementById(targetId);
-                          if (element) {
-                            const headerOffset = 100;
-                            const elementPosition = element.getBoundingClientRect().top;
-                            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-                            window.scrollTo({
-                              top: offsetPosition,
-                              behavior: "smooth"
-                            });
-
-                            // Force restart animation
-                            element.classList.remove('service-highlight');
-                            void element.offsetWidth; // Trigger reflow
-                            element.classList.add('service-highlight');
-
-                            setTimeout(() => {
-                              element.classList.remove('service-highlight');
-                            }, 3000);
-                          }
-                        }
                       }}
                       className="block w-full text-left px-6 py-3 text-xs md:text-sm text-gold-dark hover:bg-peach/20 hover:text-gold-deep transition-colors border-l-4 border-transparent hover:border-gold"
                     >
                       {service.title}
-                    </button>
+                    </Link>
                   ))}
                 </div>
               </div>
             </div>
 
-            <button
-              onClick={handleContactClick}
+            <Link
+              to="/contact"
               className="px-6 md:px-7 lg:px-8 py-2 md:py-2.5 bg-gold hover:bg-gold-light text-white font-bold rounded-full shadow-lg hover:shadow-gold/50 transform hover:-translate-y-0.5 transition-all duration-300 text-sm lg:text-base tracking-normal"
             >
               CONTACT US
-            </button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -217,12 +155,13 @@ const Navbar: React.FC = () => {
             Home
           </Link>
 
-          <button
-            onClick={handleAboutClick}
+          <Link
+            to="/aboutus"
+            onClick={() => setMobileMenuOpen(false)}
             className="text-gold-deep text-lg font-medium hover:text-gold uppercase tracking-wider transition-colors"
           >
             About Us
-          </button>
+          </Link>
 
           <Link
             to="/gallery"
@@ -251,49 +190,27 @@ const Navbar: React.FC = () => {
                 }`}
             >
               {SERVICES.map((service) => (
-                <button
+                <Link
                   key={service.id}
+                  to={`/${service.slug}`}
                   className="block w-full py-3 text-center text-gold-deep/80 hover:text-gold font-medium transition-colors"
-                  onClick={(e) => {
-                    e.preventDefault();
+                  onClick={() => {
                     setMobileMenuOpen(false);
-                    const targetId = `service-${service.id}`;
-
-                    if (location.pathname !== '/') {
-                      navigate(`/#${targetId}`);
-                    } else {
-                      const element = document.getElementById(targetId);
-                      if (element) {
-                        const headerOffset = 100;
-                        const elementPosition = element.getBoundingClientRect().top;
-                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-                        window.scrollTo({
-                          top: offsetPosition,
-                          behavior: "smooth"
-                        });
-
-                        element.classList.remove('service-highlight');
-                        void element.offsetWidth;
-                        element.classList.add('service-highlight');
-
-                        setTimeout(() => element.classList.remove('service-highlight'), 3000);
-                      }
-                    }
                   }}
                 >
                   {service.title}
-                </button>
+                </Link>
               ))}
             </div>
           </div>
 
-          <button
-            onClick={handleContactClick}
-            className="w-full max-w-xs px-6 py-3 bg-gold hover:bg-gold-light text-white font-bold rounded-full shadow-lg hover:shadow-gold/40 transition-all"
+          <Link
+            to="/contact"
+            onClick={() => setMobileMenuOpen(false)}
+            className="w-full max-w-xs px-6 py-3 bg-gold hover:bg-gold-light text-white font-bold rounded-full shadow-lg hover:shadow-gold/40 transition-all text-center"
           >
             CONTACT US
-          </button>
+          </Link>
         </div>
       </div>
     </nav>

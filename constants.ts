@@ -77,30 +77,48 @@ export const SLIDES: Slide[] = [
 ];
 
 export const SERVICES: ServiceItem[] = [
-  { id: 1, title: "Buy/Sell Properties (Plots, Villas, Flats)", link: "/#services" },
-  { id: 2, title: "Documentation (Patta, EC)", link: "/#services" },
-  { id: 3, title: "Property Registration Services", link: "/#services" },
+  { id: 1, title: "Buy/Sell Properties (Plots, Villas, Flats)", link: "/#services", slug: "property-sales" },
+  { id: 2, title: "Documentation (Patta, EC)", link: "/#services", slug: "documentation" },
+  { id: 3, title: "Property Registration Services", link: "/#services", slug: "registration" },
 ];
+
+// Google Icon for Reviews (Monochrome)
+const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  React.createElement("svg", {
+    ...props,
+    viewBox: "0 0 24 24",
+    fill: "currentColor",
+    stroke: "currentColor",
+    strokeWidth: "0" // Use fill for 'G' logo
+  },
+    React.createElement("path", {
+      d: "M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .533 5.347 .533 12S5.867 24 12.48 24c3.44 0 6.053-1.147 8.16-3.293 2.133-2.133 2.827-5.12 2.827-7.547 0-.747-.08-1.48-.173-2.24H12.48z"
+    })
+  )
+);
 
 export const SOCIAL_LINKS: SocialLink[] = [
   { platform: "Instagram", url: "https://www.instagram.com/kushibusy/", icon: Instagram },
   { platform: "YouTube", url: "https://www.youtube.com/@KUSHIBUSY", icon: Youtube },
   { platform: "Facebook", url: "https://facebook.com", icon: Facebook },
-  { platform: "WhatsApp", url: "https://whatsapp.com", icon: WhatsAppBrandIcon },
-  { platform: "Email", url: "mailto:nazeerahamedswin@gmail.com", icon: Mail },
+  { platform: "WhatsApp", url: "https://wa.me/+919840013421", icon: WhatsAppBrandIcon },
+  { platform: "Email", url: "mailto:brightrealityrealestate@gmail.com", icon: Mail },
+  { platform: "Google Reviews", url: "https://g.page/r/CXFNhZDbWYmNEAI/review", icon: GoogleIcon }, // Placeholder URL
 ];
 
 export const COMPANY_INFO = {
   name: "Bright Reality",
   tagline: "An Oppertunity to Enrich Yourself",
   address: "No.62/2, 2nd Floor, South Sivan Koil Street, Vadapalani, Chennai - 600 026",
-  email: "nazeerahamedswin@gmail.com",
-  phone: "+91 98400 13421",
+  email: "brightrealityrealestate@gmail.com",
+  phone: "+91 98400 55492",
   copyrightYear: "2026",
-  mapAddress: "No.62/2, 2nd Floor, South Sivan Koil Street, Vadapalani, Chennai - 600 026"
+  mapAddress: "No.62/2, 2nd Floor, South Sivan Koil Street, Vadapalani, Chennai - 600 026",
+  googleMapLink: "https://maps.app.goo.gl/rgyNhRoqV9YPb1dx7",
+  mapEmbedSrc: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3886.498492067764!2d80.2125164!3d13.0471321!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2ae321b5313b9565%3A0x8d8959db90854d71!2sBright%20Reality!5e0!3m2!1sen!2sin!4v1707900000000!5m2!1sen!2sin"
 };
 
-export const ABOUT_US_IMAGE = "/assets/images/9.png";
+export const ABOUT_US_IMAGE = "/assets/images/About Us Image.png";
 
 export const GALLERY_ITEMS: GalleryItem[] = [
   { type: 'image', src: "https://picsum.photos/1200/800?random=10", alt: "Luxury Bedroom" },
@@ -125,6 +143,6 @@ export const COLORS = {
 
 // Contact Information
 export const CONTACT_INFO = {
-  phone: '+1234567890', // Replace with actual phone number
-  whatsapp: '+1234567890', // Replace with actual WhatsApp number (will be provided by user)
+  phone: '+91 98400 55492 ', // Replace with actual phone number
+  whatsapp: '+919840013421', // Replace with actual WhatsApp number (will be provided by user)
 };
